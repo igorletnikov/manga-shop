@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:replace="common/header ::common-header" />
+
+<body>
+<!-- vikame header -->
+<div th:replace="common/header :: navbar"></div>
+
+<!-- container start -->
+<div th:if="${param.error}">
+    <h2 class="text-center text-danger" th:text="${param.error}"></h2>
+</div>
+<div th:if="${param.message}">
+    <h2 class="text-center text-danger" th:text="${param.message}"></h2>
+</div>
+
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-12" th:if="${products.size() > 0}">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Image</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Available</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Manufacturer</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="product : ${products}">
+                        <td><img th:src="${product.getBase64Image()}" alt="none"/></td>
+                        <td th:text="${product.getName()}"></td>
+                        <td th:text="${product.getQuantity() > 0 } ? 'In stock' : 'Out of stock'"></td>
+                        <td th:text="${product.getQuantity()}"></td>
+                        <td th:text="${product.getPrice()}"></td>
+                        <td th:text="${product.getManufacturer() != null} ?
+                                ${product.getManufacturer().getName()} :
+                                'No Manufacturer'"></td>
+                        <td>
+                            <a
+                                    class="btn btn-info btn-sm"
+                                    th:href="@{/products/{id}/edit(id=${product.getId()})}">
+                                <i class="fa fa-trash"> Edit</i>
+                            </a>
+                            <form th:action="@{/products/{id}/delete(id=${product.getId()})}" th:method="delete">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+
+                            <form th:action="@{/shopping-cart/{id}/add-new(id=${product.getId()})}" th:method="post">
+                                <button type="submit" class="btn btn-sm btn-primary"><i class="fa">Add to cart</i></button>
+                            </form>
+                            <form th:action="@{/shopping-cart/{id}/remove-product(id=${product.getId()})}" th:method="post">
+                                <button type="submit" class="btn btn-sm btn-warning"><i class="fa">Remove from cart</i></button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col mb-2">
+            <div class="row">
+                <div class="col-sm-12  col-md-12" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a href="/products/add-new" class="btn btn-block btn-light">Add new product</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- container end -->
+
+<!-- vikame dole skripta -->
+<div th:replace="common/header :: body-bottom-scripts"></div>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="common/header ::common-header"></head>
+
+<body>
+<!-- vikame header -->
+<div th:replace="common/header :: navbar"></div>
+
+<!-- container start -->
+
+<div th:if="${param.error}">
+    <h2 class="text-center text-danger" th:text="${param.error}"></h2>
+</div>
+<div class="cat-main-box">
+    <div th:if="${param.error}">
+        <h2 class="text-center text-danger" th:text="${param.error}"></h2>
+    </div>
+
+    <div class="container">
+        <div class="row panel-row">
+            <div class="container mb-4" style="margin: 3%">
+                <div class="col-md-10">
+                    <form action="/payments/charge"
+                          method="post">
+<!--                        TABELATA-->
+                        <div class="row">
+                            <div class="col-12" th:if="${shoppingCart.getProducts().size() > 0}">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Image</th>
+                                            <th scope="col">Product</th>
+                                            <th scope="col">Available</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Manufacturer</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        <tr th:each="product : ${shoppingCart.getProducts()}">
+                                            <td><img th:src="${product.getBase64Image()}" alt="none"/></td>
+                                            <td th:text="${product.getName()}"></td>
+                                            <td th:text="${product.getQuantity() > 0 } ? 'In stock' : 'Out of stock'"></td>
+                                            <td th:text="${product.getQuantity()}"></td>
+                                            <td th:text="${product.getPrice()}"></td>
+                                            <td th:text="${product.getManufacturer() != null} ?
+                                ${product.getManufacturer().getName()} :
+                                'No Manufacturer'"></td>
+                                            <td>
+
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-left:2%">
+                                <h3 class="text-primary" th:text="${amount/100} + ' ' + ${currency}">
+                                </h3>
+
+                            </div>
+                            <br/>
+                        </div>
+                        <input type="hidden" th:value="${amount}" name="amount"/>
+                        <input type="hidden" th:value="${currency}" name="currency"/>
+                        <div style="border:1px solid black">
+                            <textarea rows="5" cols="10"  name="description" placeholder="Description!"></textarea>
+                        </div>
+
+                        <script
+                                src='https://checkout.stripe.com/checkout.js'
+                                class='stripe-button'
+                                th:attr='data-key=${stripePublicKey},
+                            data-amount=${amount},
+                            data-currency=${currency}'
+                                data-name='Stripe Pay'
+                                data-description='checkout'
+                                data-locale='auto'
+                                data-zip-code='false'>
+                        </script>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- container end -->
+
+<!-- vikame dole skripta -->
+<div th:replace="common/header :: body-bottom-scripts"></div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="common/header ::common-header" />
+
+<body>
+<!-- vikame header -->
+<div th:replace="common/header :: navbar"></div>
+
+<!-- container start -->
+
+<div th:if="${param.error}">
+    <h2 class="text-center text-danger" th:text="${param.error}"></h2>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <form th:action="@{/products}"
+                  enctype="multipart/form-data"
+                  th:method="post"
+                  th:object="${product}"
+            >
+                <input type="text" hidden="hidden" name="id" th:value="${product.getId()}">
+
+                <div class="form-group">
+                    <h4 class="text-danger" th:if="${#fields.hasErrors('name')}"
+                        th:errors="*{name}">
+
+
+                    </h4>
+                    <label>Product name</label>
+                    <input
+                            type="text"
+                            name="name"
+                            th:value="${product.getName()}"
+                            th:field="*{name}"
+                            placeholder="Enter name">
+                </div>
+
+                <div class="form-group">
+                    <label>Price</label>
+                    <input
+                            type="text"
+                            name="price"
+                            th:field="*{price}"
+                            th:value="${product.getPrice()}"
+                            placeholder="Enter price">
+                </div>
+
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input
+                            type="text"
+                            name="quantity"
+                            th:field="*{quantity}"
+                            th:value="${product.getQuantity()}"
+                            placeholder="Enter quantity">
+                </div>
+
+                <div class="form-group">
+                    <label>Manufacturer</label>
+                    <select th:field="*{manufacturer.id}" name="manufacturer.id" class="form-control">
+                        <option
+                                th:each="man : ${manufacturers}"
+                                th:value="${man.getId()}"
+                                th:text="${man.getName()}"
+                                th:selected="${product.getManufacturer() != null && product.getManufacturer().getId() == man.getId()}"
+                        >
+
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Image</label>
+                    <input name="image" type="file" class="form-control"/>
+                </div>
+
+
+                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                <a type="button" th:href="@{/products}" class="btn btn-sm btn-info">Go Back</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- container end -->
+
+<!-- vikame dole skripta -->
+<div th:replace="common/header :: body-bottom-scripts"></div>
+</body>
+</html>
